@@ -1,0 +1,67 @@
+#version 420 core
+layout (location = 0) in vec3 aPos;
+layout (location = 1) in vec2 aTexCoords;
+layout (location = 2) in vec3 aNormal;
+
+layout (std140, binding = 0) uniform MatVP {
+    mat4 View;
+    mat4 Projection;
+};
+
+uniform mat4 Model;
+uniform float u_Time;
+
+out vec3 FragPos;
+out vec3 DynamicNormal;
+
+// 計算單一波浪的高度與法向量偏移
+// 參數: 頂點位置, 波浪方向(x,z), 振幅(高低), 頻率(疏密), 速度
+void addWave(vec3 p, vec2 dir, float amp, float freq, float speed, inout float height, inout vec3 tangent, inout vec3 binormal) {
+    vec2 d = normalize(dir);
+    // 計算正弦波參數
+    float f = dot(d, p.xz) * freq + u_Time * speed;
+    float cosf = cos(f);
+    float sinf = sin(f);
+
+    // 累加高度
+    height += amp * sinf;
+
+    // 累加法向量的微積分偏移 (偏導數)
+    float derivative = freq * amp * cosf;
+    tangent.x -= d.x * d.x * derivative;
+    tangent.z -= d.x * d.y * derivative;
+    binormal.x -= d.x * d.y * derivative;
+    binormal.z -= d.y * d.y * derivative;
+    tangent.y += d.x * derivative;
+    binormal.y += d.y * derivative;
+}
+
+void main() {
+    vec3 p = aPos;
+
+    float height = 0.0;
+    // 建立基礎切線空間，準備用來推導最終法線
+    vec3 tangent = vec3(1.0, 0.0, 0.0);
+    vec3 binormal = vec3(0.0, 0.0, 1.0);
+
+    // ==========================================
+    // 物理波浪疊加 (方向, 振幅, 頻率, 速度)
+    // ==========================================
+    // 主波浪：寬大而緩慢
+    addWave(p, vec2(1.0, 0.5), 0.05, 2.0, 1.2, height, tangent, binormal);
+    // 副波浪：逆向且細碎
+    addWave(p, vec2(-0.7, 0.7), 0.02, 4.0, 2.0, height, tangent, binormal);
+    // 擾動波浪：微小而快速
+    addWave(p, vec2(0.2, -0.8), 0.01, 8.0, 3.5, height, tangent, binormal);
+
+    // 套用高低起伏
+    p.y += height;
+
+    FragPos = vec3(Model * vec4(p, 1.0));
+
+    // 透過叉積 (Cross Product) 算出最終完美的 3D 動態法向量
+    vec3 normal = normalize(cross(binormal, tangent));
+    DynamicNormal = mat3(Model) * normal;
+
+    gl_Position = Projection * View * vec4(FragPos, 1.0);
+}

@@ -1,0 +1,105 @@
+/*#version 430 core
+
+layout(location = 0) in vec3 vPosition;
+layout(location = 1) in vec2 vertexUV;
+layout(location = 2) in vec3 vertexNormal;
+
+// 接收來自 C++ 的影分身矩陣陣列
+layout(std430, binding = 1) buffer InstanceBuffer {
+    mat4 models[];
+};
+
+// 統一區塊 (Uniform Block) 接收攝影機資訊
+layout(std140, binding = 0) uniform MatVP {
+    mat4 View;
+    mat4 Projection;
+};
+
+// --- 控制變數 ---
+uniform int u_PartIndex;
+uniform mat4 Model;
+
+// ==========================================
+// --- 輸出到 Fragment Shader 的變數 (世界座標系) ---
+// ==========================================
+out vec3 FragPos;
+out vec3 Normal;
+out vec2 TexCoords; // 對齊 robot.fp 的命名
+
+void main(void)
+{
+    mat4 modelMatrix;
+
+    int matrixIndex = (gl_InstanceID * 15) + u_PartIndex;
+    modelMatrix = models[matrixIndex];
+
+    // ==========================================
+    // 2. 世界座標系轉換 (專為環境反射打造)
+    // ==========================================
+    // 取得「世界空間」下的頂點位置
+    FragPos = vec3(modelMatrix * vec4(vPosition, 1.0));
+
+    // 取得「世界空間」下的法向量 (過濾掉位移與不均勻縮放的干擾)
+    Normal = mat3(transpose(inverse(modelMatrix))) * vertexNormal;
+
+    // 傳遞 UV
+    TexCoords = vertexUV;
+
+    // 輸出最終的裁剪空間座標 (Projection * View * Model)
+    gl_Position = Projection * View * modelMatrix * vec4(vPosition, 1.0);
+}
+*/
+#version 430 core
+
+layout(location = 0) in vec3 vPosition;
+layout(location = 1) in vec2 vertexUV;
+layout(location = 2) in vec3 vertexNormal;
+
+// 接收來自 C++ 的影分身矩陣陣列
+layout(std430, binding = 1) buffer InstanceBuffer {
+    mat4 models[];
+};
+
+// 統一區塊 (Uniform Block) 接收攝影機資訊
+layout(std140, binding = 0) uniform MatVP {
+    mat4 View;
+    mat4 Projection;
+};
+
+// --- 控制變數 ---
+uniform int u_PartIndex;
+uniform mat4 Model;
+uniform mat4 lightSpaceMatrix;
+
+// ==========================================
+// --- 輸出到 Fragment Shader 的變數 (世界座標系) ---
+// ==========================================
+out vec3 FragPos;
+out vec3 Normal;
+out vec2 TexCoords; // 對齊 robot.fp 的命名
+out vec4 FragPosLightSpace;
+
+void main(void)
+{
+    mat4 modelMatrix;
+    int matrixIndex = (gl_InstanceID * 15) + u_PartIndex;
+    modelMatrix = models[matrixIndex];
+
+    // ==========================================
+    // 2. 世界座標系轉換 (專為環境反射打造)
+    // ==========================================
+    // 取得「世界空間」下的頂點位置
+    FragPos = vec3(modelMatrix * vec4(vPosition, 1.0));
+
+    // 取得「世界空間」下的法向量 (過濾掉位移與不均勻縮放的干擾)
+    Normal = mat3(transpose(inverse(modelMatrix))) * vertexNormal;
+
+    // 傳遞 UV
+    TexCoords = vertexUV;
+
+    // 計算頂點在光源空間中的位置，並傳給 Fragment Shader 計算陰影
+    FragPosLightSpace = lightSpaceMatrix * vec4(FragPos, 1.0);
+
+    // 輸出最終的裁剪空間座標 (Projection * View * Model)
+    gl_Position = Projection * View * modelMatrix * vec4(vPosition, 1.0);
+}

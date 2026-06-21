@@ -1,0 +1,180 @@
+{
+    "fireworkTrack": [],
+    "frames": [
+        {
+            "chidori": {
+                "color": [
+                    0.30000001192092896,
+                    0.800000011920929,
+                    1.0
+                ],
+                "intensity": 1.0,
+                "offset": 0.0,
+                "rightHand": false,
+                "show": false
+            },
+            "fireball": {
+                "intensity": 1.0,
+                "offset": 0.0,
+                "show": false,
+                "speed": 1.0
+            },
+            "nextFrameIndex": 1,
+            "offset": [
+                0.0,
+                16.0,
+                0.0
+            ],
+            "pose": {
+                "core": {
+                    "pitch": 15.0,
+                    "roll": -5.0,
+                    "yaw": 0.0
+                },
+                "downBody": {
+                    "pitch": 0.0,
+                    "roll": 0.0,
+                    "yaw": 0.0
+                },
+                "downLeftArm": -20.0,
+                "downLeftLeg": 30.0,
+                "downRightArm": -20.0,
+                "downRightLeg": 0.0,
+                "footLeft": {
+                    "pitch": 15.0,
+                    "roll": 0.0,
+                    "yaw": 0.0
+                },
+                "footRight": {
+                    "pitch": -15.0,
+                    "roll": 0.0,
+                    "yaw": 0.0
+                },
+                "handLeft": {
+                    "pitch": 0.0,
+                    "roll": 0.0,
+                    "yaw": 0.0
+                },
+                "handRight": {
+                    "pitch": 0.0,
+                    "roll": 0.0,
+                    "yaw": 0.0
+                },
+                "head": {
+                    "pitch": 0.0,
+                    "roll": 0.0,
+                    "yaw": 0.0
+                },
+                "upLeftArm": {
+                    "pitch": 30.0,
+                    "roll": 20.0,
+                    "yaw": 0.0
+                },
+                "upLeftLeg": {
+                    "pitch": -60.0,
+                    "roll": 0.0,
+                    "yaw": 0.0
+                },
+                "upRightArm": {
+                    "pitch": -30.0,
+                    "roll": -20.0,
+                    "yaw": 0.0
+                },
+                "upRightLeg": {
+                    "pitch": 30.0,
+                    "roll": 0.0,
+                    "yaw": 0.0
+                }
+            },
+            "time": 1.0
+        },
+        {
+            "chidori": {
+                "color": [
+                    0.30000001192092896,
+                    0.800000011920929,
+                    1.0
+                ],
+                "intensity": 1.0,
+                "offset": 0.0,
+                "rightHand": false,
+                "show": false
+            },
+            "fireball": {
+                "intensity": 1.0,
+                "offset": 0.0,
+                "show": false,
+                "speed": 1.0
+            },
+            "nextFrameIndex": 0,
+            "offset": [
+                0.0,
+                16.0,
+                0.0
+            ],
+            "pose": {
+                "core": {
+                    "pitch": 15.0,
+                    "roll": 5.0,
+                    "yaw": 0.0
+                },
+                "downBody": {
+                    "pitch": 0.0,
+                    "roll": 0.0,
+                    "yaw": 0.0
+                },
+                "downLeftArm": -20.0,
+                "downLeftLeg": 0.0,
+                "downRightArm": -20.0,
+                "downRightLeg": 30.0,
+                "footLeft": {
+                    "pitch": -15.0,
+                    "roll": 0.0,
+                    "yaw": 0.0
+                },
+                "footRight": {
+                    "pitch": 15.0,
+                    "roll": 0.0,
+                    "yaw": 0.0
+                },
+                "handLeft": {
+                    "pitch": 0.0,
+                    "roll": 0.0,
+                    "yaw": 0.0
+                },
+                "handRight": {
+                    "pitch": 0.0,
+                    "roll": 0.0,
+                    "yaw": 0.0
+                },
+                "head": {
+                    "pitch": 0.0,
+                    "roll": 0.0,
+                    "yaw": 0.0
+                },
+                "upLeftArm": {
+                    "pitch": -30.0,
+                    "roll": 20.0,
+                    "yaw": 0.0
+                },
+                "upLeftLeg": {
+                    "pitch": 30.0,
+                    "roll": 0.0,
+                    "yaw": 0.0
+                },
+                "upRightArm": {
+                    "pitch": 30.0,
+                    "roll": -20.0,
+                    "yaw": 0.0
+                },
+                "upRightLeg": {
+                    "pitch": -60.0,
+                    "roll": 0.0,
+                    "yaw": 0.0
+                }
+            },
+            "time": 1.0
+        }
+    ],
+    "totalTimeSpan": 2.0
+}

@@ -1,0 +1,22 @@
+#version 420 core
+layout (location = 0) in vec3 aPos;
+out vec3 TexCoords;
+
+// 完美重複利用你昨天挖好的 0 號插座！
+layout (std140, binding = 0) uniform MatVP {
+    mat4 View;
+    mat4 Projection;
+};
+
+void main() {
+    TexCoords = aPos; // 在 Cube 裡面，頂點的局部座標剛好就是 3D UV 座標
+
+    // 關鍵數學：把 4x4 的 View 轉成 3x3 再轉回 4x4。
+    // 這會把平移量(位移)給清零，只保留旋轉。這樣玩家就永遠走不到天空盒的邊界。
+    mat4 staticView = mat4(mat3(View));
+
+    vec4 pos = Projection * staticView * vec4(aPos, 1.0);
+
+    // 關鍵渲染：將 Z 強制設為 W，這樣透視除法 (Z/W) 後深度永遠是 1.0 (最遠處)
+    gl_Position = pos.xyww;
+}

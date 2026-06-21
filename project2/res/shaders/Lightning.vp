@@ -1,0 +1,18 @@
+#version 430 core
+layout (location = 0) in vec3 aPos;
+
+layout (std140, binding = 0) uniform MatVP {
+    mat4 View;
+    mat4 Projection;
+};
+
+// 宣告綁定在 2 號位的 SSBO，裡面裝滿矩陣 (1號位給機器人用了)
+layout (std430, binding = 2) buffer InstanceBuffer {
+    mat4 InstanceModels[];
+};
+
+void main() {
+    // 根據自己是第幾個實體 (gl_InstanceID)，去拿對應的旋轉矩陣
+    mat4 model = InstanceModels[gl_InstanceID];
+    gl_Position = Projection * View * model * vec4(aPos, 1.0);
+}
