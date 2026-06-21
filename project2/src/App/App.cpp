@@ -1,6 +1,6 @@
 #include <iostream>
 #include <functional>
-#include <stdlib.h>
+#include <cstdlib>
 #include <imgui.h>
 #include <imgui_internal.h>
 #include <imgui_impl_opengl3.h>
@@ -27,7 +27,7 @@ namespace CG
 
 	auto App::Initialize() -> bool
 	{
-
+	    setupDisplayEnvironment();
 		// Set error callback
 		glfwSetErrorCallback([](int error, const char* description)
 			{ fprintf(stderr, "GLFW Error %d: %s\n", error, description); });
@@ -221,5 +221,27 @@ namespace CG
 		glViewport(0, 0, display_w, display_h);
 
 		mainScene->Render();
+	}
+
+	void App::setupDisplayEnvironment()
+	{
+	    #if defined(__linux__)
+            const char* waylandDisplay = std::getenv("WAYLAND_DISPLAY");
+            const char* xDisplay = std::getenv("DISPLAY");
+
+            if (waylandDisplay != nullptr) {
+                std::cout << "[Env Check] Detected Wayland environment (" << waylandDisplay << ").\n";
+                std::cout << "[Env Check] Applying XWayland fallback for GLEW compatibility.\n";
+                unsetenv("WAYLAND_DISPLAY");
+                if (xDisplay == nullptr) {
+                    setenv("DISPLAY", ":1", 1);
+                }
+            } else {
+                std::cout << "[Env Check] Detected Linux native X11 or Headless.\n";
+            }
+
+        #elif defined(_WIN32) || defined(_WIN64)
+            std::cout << "[Env Check] Detected Windows environment. WGL will be used automatically.\n";
+        #endif
 	}
 }

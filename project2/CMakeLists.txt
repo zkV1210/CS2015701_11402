@@ -9,8 +9,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # 這是消滅 C++ 執行時期 DLL 的關鍵
 # ==========================================
 if(MSVC)
-    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
-    add_compile_options(/utf-8)
+  set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+  add_compile_options(/utf-8)
 endif()
 
 
@@ -64,23 +64,19 @@ add_executable(Project2 ${SOURCES} ${IMGUI_SOURCES})
 
 
 if(WIN32)
-    target_link_libraries(Project2 PRIVATE
+  target_link_libraries(Project2 PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/libs/glew32s.lib
         ${CMAKE_CURRENT_SOURCE_DIR}/libs/glfw3_mt.lib
-        opengl32  
-        gdi32    
-        user32    
-        shell32   
+        opengl32
+        gdi32
+        user32
+        shell32
     )
 else()
-    # Linux (CachyOS) 環境：維持原本的動態庫搜尋邏輯
-    find_package(OpenGL REQUIRED)
-    find_package(GLEW REQUIRED)
-    
-    # 務實提醒：你的原始碼用的是 ImGui GLFW backend，但你原本腳本卻找了 GLUT。
-    # 這裡幫你拿掉無用的 GLUT 搜尋，維持乾淨。
-    
-    target_link_libraries(Project2 PRIVATE
+  find_package(OpenGL REQUIRED)
+  find_package(GLEW REQUIRED)
+
+  target_link_libraries(Project2 PRIVATE
         ${GLEW_LIBRARIES}
         ${OPENGL_LIBRARIES}
         glfw m dl X11

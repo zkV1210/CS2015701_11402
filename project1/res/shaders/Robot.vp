@@ -1,0 +1,77 @@
+// ADS Point lighting Shader
+// Vertex Shader - SSBO Instanced Version
+#version 430 core
+
+layout(location = 0) in vec3 vPosition;
+layout(location = 1) in vec2 vertexUV; // [cite: 2]
+layout(location = 2) in vec3 vertexNormal;
+
+// 接收來自 C++ 的影分身矩陣陣列 (給機器人用)
+layout(std430, binding = 1) buffer InstanceBuffer {
+    mat4 models[];
+};
+
+// 統一區塊 (Uniform Block) 接收攝影機資訊
+layout(std140, binding = 0) uniform MatVP {
+    mat4 View;
+    mat4 Projection; // [cite: 3]
+};
+
+// --- 控制變數 ---
+uniform int u_PartIndex; // 零件索引 (-1 代表地板，0~14 代表機器人)
+uniform mat4 Model;      // 保留給地板使用的傳統矩陣
+
+// 固定光源位置 (沿用原設定)
+vec3 vLightPosition = vec3(2000, 2000, 2000);
+
+// --- 輸出到 Fragment Shader 的變數 ---
+out vec3 vVaryingNormal;
+out vec3 vVaryingLightDir;
+out vec3 vVaryingEyeDir;
+out vec2 UV; // [cite: 4]
+
+void main(void)
+{
+    mat4 modelMatrix;
+
+    // ==========================================
+    // 1. 智慧判斷：現在畫的是地板還是機器人？
+    // ==========================================
+    if (u_PartIndex == -1)
+    {
+        // 畫地板：傳統方式直接讀取 uniform mat4 Model
+        modelMatrix = Model;
+    }
+    else
+    {
+        // 畫機器人：新式 Instanced 方式去 SSBO 裡面撈矩陣
+        int matrixIndex = (gl_InstanceID * 15) + u_PartIndex;
+        modelMatrix = models[matrixIndex];
+    }
+
+    // ==========================================
+    // 2. 幾何轉換 (沿用你原本的邏輯)
+    // ==========================================
+    mat4 MV = View * modelMatrix;
+    mat4 MVP = Projection * View * modelMatrix;
+
+    // 取得觀察座標系下的法向量 (過濾掉位移與縮放的干擾)
+    mat3 normalMatrix = mat3(transpose(inverse(MV)));
+    vVaryingNormal = normalMatrix * vertexNormal; //
+
+    // 取得觀察座標系下的頂點位置
+    vec4 vPosition4 = MV * vec4(vPosition, 1.0); // [cite: 6]
+    vec3 vPosition3 = vPosition4.xyz / vPosition4.w; // [cite: 7]
+
+    // 計算光照方向向量
+    vVaryingLightDir = normalize(vLightPosition - vPosition3);
+
+    // 計算視線方向向量 (在觀察空間中，相機就在原點，所以視線就是 -vPosition3)
+    vVaryingEyeDir = -vPosition3; // [cite: 8]
+
+    // 傳遞 UV
+    UV = vertexUV;
+
+    // 輸出最終的裁剪空間座標
+    gl_Position = MVP * vec4(vPosition, 1.0); // [cite: 9]
+}

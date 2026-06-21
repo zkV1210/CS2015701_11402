@@ -26,6 +26,7 @@ namespace CG
     private:
         void Update(double dt);
         void Render();
+        void setupDisplayEnvironment();
 
     private:
         GLFWwindow* mainWindow;
