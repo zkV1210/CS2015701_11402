@@ -48,11 +48,13 @@ make
 ```
 * on windows, in a project folder:
 ```
-
+mkdir build; cd build
+cmake ..
+cmake --build . --config Release
 ```
 
 **For Run :**
-make sure your executable is in the same directory with `res/` folder
+make sure your executable is in the same directory with `res/` folder.
 
 ## Repository Structure
 待補

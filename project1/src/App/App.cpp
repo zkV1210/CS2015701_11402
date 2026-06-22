@@ -27,8 +27,6 @@ namespace CG
 
 	auto App::Initialize() -> bool
 	{
-        unsetenv("WAYLAND_DISPLAY");
-        setenv("DISPLAY", ":1", 1);
 		// Set error callback
 		glfwSetErrorCallback([](int error, const char* description)
 			{ fprintf(stderr, "GLFW Error %d: %s\n", error, description); });
